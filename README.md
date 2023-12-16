@@ -40,7 +40,7 @@ sudo ./archdesktop
 
 * to implement **Remove selected packages** - in progress
 
-* to prevent users to remove **networkmanager** and all **Kernels** - in progress
+* to prevent the user to remove **networkmanager** and all **Kernels** - in progress
 
 * to implement **AUR Helper** - in progress
 
