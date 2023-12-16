@@ -2,7 +2,7 @@
 
 This is a simple bash script for Arch Linux that Install and Remove Desktop Environments and Extra Packages, Add and Remove Groups, Install and Disable Services.
 
-The **Categories** and **Packages** selections are pretty much from **EndeavourOS**. I removed from list **EndeavourOS** related packages, **base**, **coreutils** (except linux), **sudo** and **Bootloaders**. On top of that I added more **Browsers**, **Kernels** and a few recommended packages.
+The **Categories** and **Packages** list are pretty much from **EndeavourOS** ISO Installer. I removed from list **EndeavourOS** related packages, **base**, **coreutils** (except linux), **sudo** and **Bootloaders**. On top of that I added more **Browsers**, **Kernels** and a few more recommended packages.
 
 #### Install dependencies
 
@@ -70,4 +70,4 @@ sudo ./archdesktop
 
 #### Bug report
 
-If you find a bug please open a new issue and send a Bug report.
+If you find a bug please open a new [issue](https://github.com/efraimkaov/archdesktop/issues) and send a Bug report.
