@@ -28,6 +28,8 @@ chmod +x archdesktop
 sudo ./archdesktop
 ```
 
+#### A few screenshots
+
 ![Arch Desktop](https://github.com/efraimkaov/archdesktop/assets/63643635/56161add-97bf-43bf-b43b-ffc661fcfdb5)
 
 ![Desktop-Base](https://github.com/efraimkaov/archdesktop/assets/63643635/7e9322f6-1f14-4ece-984d-7179ba9508ef)
