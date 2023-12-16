@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+
+# Check if the script is run as root
+if [ "$EUID" -ne 0 ]; then
+    echo "This script must be run as root. Please use sudo or log in as root."
+    exit
+fi
+
+# export variables
+export DIALOGRC=./dialog/dialogrc
+
+# remove temporary files if any
+rm -f /tmp/archdesktop*
+
+# dialog sizes
+height=20
+width=60
+listHeight=5
+
+# desktop_base
+function desktop_base() {
+  folder_path="./data/DesktopBaseDir"
+  files=("$folder_path"/*)
+  menu_items=()
+  for file in "${files[@]}"; do
+    menu_items+=("$(basename "$file")" "")
+  done
+  menu_items+=("Back" "")
+  selected_file=$(dialog --no-cancel --title " Desktop-Base + Common packages " \
+  --menu "<Enter> activates" $height $width $listHeight \
+  "${menu_items[@]}" 3>&2 2>&1 1>&3)
+}
+
+# desktop_env
+function desktop_env() {
+  folder_path="./data/DesktopEnvironmentDir"
+  files=("$folder_path"/*)
+  menu_items=()
+  for file in "${files[@]}"; do
+    menu_items+=("$(basename "$file")" "")
+  done
+  menu_items+=("Back" "")
+  selected_file=$(dialog --no-cancel --title " Desktop Environment " \
+  --menu "<Enter> activates" $height $width $listHeight \
+  "${menu_items[@]}" 3>&2 2>&1 1>&3)
+}
+
+# extra_packages
+function extra_packages() {
+  folder_path="./data/ExtraPackagesDir"
+  files=("$folder_path"/*)
+  menu_items=()
+  for file in "${files[@]}"; do
+    menu_items+=("$(basename "$file")" "")
+  done
+  menu_items+=("Back" "")
+  selected_file=$(dialog --no-cancel --title " Extra Packages " \
+  --menu "<Enter> activates" $height $width $listHeight \
+  "${menu_items[@]}" 3>&2 2>&1 1>&3)
+}
+
+# aur_helper
+function aur_helper() {
+  dialog --title " AUR Helper " \
+  --radiolist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "None" "" on \
+  "paru" "pkg" off \
+  "yay" "pkg" off 3>&2 2>&1 1>&3
+}
+
+# main_menu in loop
+while true; do
+    main_menu=$(dialog --no-cancel --title " Arch Desktop " \
+    --menu "<Enter> activates" $height $width $listHeight \
+    "Desktop-Base + Common packages" "" \
+    "Desktop Environment" "" \
+    "Extra Packages" "" \
+    "AUR Helper" "" \
+    "Group" "" \
+    "Service" "" \
+    "Intall selected packages" "" \
+    "Remove selected packages" "" \
+    "Quit" "" 3>&2 2>&1 1>&3)
+
+  if [ "$main_menu" == "Desktop-Base + Common packages" ]; then
+    while true; do
+      desktop_base
+      if [ "$selected_file" != "Back" ]; then
+        dialog --title " $selected_file " \
+        --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+        $(awk '{print $1, "pkg", "on"}' "$folder_path/$selected_file") 2> $(mktemp /tmp/archdesktop.XXXXXX)
+      else
+        break
+      fi
+    done
+  elif [ "$main_menu" == "Desktop Environment" ]; then
+    while true; do
+      desktop_env
+      if [ "$selected_file" != "Back" ]; then
+        dialog --title " $selected_file " \
+        --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+        $(awk '{print $1, "pkg", "on"}' "$folder_path/$selected_file") 2> $(mktemp /tmp/archdesktop.XXXXXX)
+      else
+        break
+      fi
+    done
+  elif [ "$main_menu" == "Extra Packages" ]; then
+    while true; do
+      extra_packages
+      if [ "$selected_file" != "Back" ]; then
+        dialog --title " $selected_file " \
+        --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+        $(awk '{print $1, "pkg", "on"}' "./data/ExtraPackagesDir/$selected_file") 2> $(mktemp /tmp/archdesktop.XXXXXX)
+      else
+        break
+      fi
+    done
+  elif [ "$main_menu" == "AUR Helper" ]; then
+    aur_helper
+  elif [ "$main_menu" == "Group" ]; then
+    echo
+  elif [ "$main_menu" == "Service" ]; then
+    echo
+  elif [ "$main_menu" == "Intall selected packages" ]; then
+    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktopall.XXXXXX)
+    sort /tmp/archdesktopall.*  | uniq > $(mktemp /tmp/archdesktopalluniq.XXXXXX)
+    clear
+    echo "Installing selected packages..."
+    pacman -Syy
+    pacman -S --needed - < /tmp/archdesktopalluniq.*
+    rm -f /tmp/archdesktop*
+    exit
+  elif [ "$main_menu" == "Remove selected packages" ]; then
+    echo
+  elif [ "$main_menu" == "Quit" ]; then
+    rm -f /tmp/archdesktop*
+    clear
+    exit
+  fi
+done
