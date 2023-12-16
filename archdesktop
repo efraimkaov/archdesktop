@@ -126,7 +126,7 @@ while true; do
     sort /tmp/archdesktopall.*  | uniq > $(mktemp /tmp/archdesktopalluniq.XXXXXX)
     clear
     echo "Installing selected packages..."
-    pacman -Syy
+    pacman -Syy archlinux-keyring --noconfirm
     pacman -S --needed - < /tmp/archdesktopalluniq.*
     rm -f /tmp/archdesktop*
     exit
