@@ -1,0 +1,16 @@
+accountsservice
+bash-completion
+bluez
+bluez-utils
+ffmpegthumbnailer
+gst-libav
+gst-plugin-pipewire
+gst-plugins-bad
+gst-plugins-ugly
+libdvdcss
+libgsf
+libopenraw
+mlocate
+poppler-glib
+xdg-user-dirs
+xdg-utils

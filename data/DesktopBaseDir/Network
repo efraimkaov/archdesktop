@@ -1,0 +1,16 @@
+b43-fwcutter
+broadcom-wl-dkms
+dhclient
+dnsmasq
+dnsutils
+ethtool
+iwd
+modemmanager
+networkmanager
+networkmanager-openconnect
+networkmanager-openvpn
+nss-mdns
+openssh
+usb_modeswitch
+wpa_supplicant
+xl2tpd

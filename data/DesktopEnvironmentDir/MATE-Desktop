@@ -1,0 +1,13 @@
+gvfs
+gvfs-afc
+gvfs-gphoto2
+gvfs-mtp
+gvfs-nfs
+gvfs-smb
+lightdm
+lightdm-slick-greeter
+mate
+mate-extra
+mpv
+network-manager-applet
+xdg-user-dirs-gtk
