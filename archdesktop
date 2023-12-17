@@ -131,7 +131,13 @@ while true; do
     rm -f /tmp/archdesktop*
     exit
   elif [ "$main_menu" == "Remove selected packages" ]; then
-    echo
+    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktopall.XXXXXX)
+    sort /tmp/archdesktopall.*  | uniq > $(mktemp /tmp/archdesktopalluniq.XXXXXX)
+    clear
+    echo "Removing selected packages..."
+    pacman -Rsc - < /tmp/archdesktopalluniq.*
+    rm -f /tmp/archdesktop*
+    exit
   elif [ "$main_menu" == "Quit" ]; then
     rm -f /tmp/archdesktop*
     clear
