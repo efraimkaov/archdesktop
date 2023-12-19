@@ -10,7 +10,7 @@ fi
 export DIALOGRC=./dialog/dialogrc
 
 # remove temporary files if any
-rm -f /tmp/archdesktop*
+rm -f /tmp/archdesktop.*
 
 # dialog sizes
 height=20
@@ -88,7 +88,7 @@ while true; do
       if [ "$selected_file" != "Back" ]; then
         dialog --title " $selected_file " \
         --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
-        $(awk '{print $1, "pkg", "on"}' "$folder_path/$selected_file") 2> $(mktemp /tmp/archdesktop.XXXXXX)
+        $(awk '{print $1, "pkg", "on"}' "$folder_path/$selected_file") 2> $(mktemp /tmp/archdesktop.pkg.XXXXXX)
       else
         break
       fi
@@ -99,7 +99,7 @@ while true; do
       if [ "$selected_file" != "Back" ]; then
         dialog --title " $selected_file " \
         --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
-        $(awk '{print $1, "pkg", "on"}' "$folder_path/$selected_file") 2> $(mktemp /tmp/archdesktop.XXXXXX)
+        $(awk '{print $1, "pkg", "on"}' "$folder_path/$selected_file") 2> $(mktemp /tmp/archdesktop.pkg.XXXXXX)
       else
         break
       fi
@@ -110,7 +110,7 @@ while true; do
       if [ "$selected_file" != "Back" ]; then
         dialog --title " $selected_file " \
         --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
-        $(awk '{print $1, "pkg", "on"}' "./data/ExtraPackagesDir/$selected_file") 2> $(mktemp /tmp/archdesktop.XXXXXX)
+        $(awk '{print $1, "pkg", "on"}' "./data/ExtraPackagesDir/$selected_file") 2> $(mktemp /tmp/archdesktop.pkg.XXXXXX)
       else
         break
       fi
@@ -122,24 +122,26 @@ while true; do
   elif [ "$main_menu" == "Service" ]; then
     echo
   elif [ "$main_menu" == "Intall selected packages" ]; then
-    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktopall.XXXXXX)
-    sort /tmp/archdesktopall.*  | uniq > $(mktemp /tmp/archdesktopalluniq.XXXXXX)
+    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
+    sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
     clear
     echo "Installing selected packages..."
     pacman -Syy archlinux-keyring --noconfirm
-    pacman -S --needed - < /tmp/archdesktopalluniq.*
-    rm -f /tmp/archdesktop*
+    pacman -S --needed - < /tmp/archdesktop.allsortuniqpkg.*
+    rm -f /tmp/archdesktop.*
     exit
   elif [ "$main_menu" == "Remove selected packages" ]; then
-    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktopall.XXXXXX)
-    sort /tmp/archdesktopall.*  | uniq > $(mktemp /tmp/archdesktopalluniq.XXXXXX)
+    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
+    sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
+    pacman -Qq | sort > $(mktemp /tmp/archdesktop.installedpkg.XXXXXX)
+    comm -12 /tmp/archdesktop.allsortuniqpkg.* /tmp/archdesktop.installedpkg.* > $(mktemp /tmp/archdesktop.removepkg.XXXXXX)
     clear
     echo "Removing selected packages..."
-    pacman -Rsc - < /tmp/archdesktopalluniq.*
-    rm -f /tmp/archdesktop*
+    pacman -Rcns - < /tmp/archdesktop.removepkg.*
+    rm -f /tmp/archdesktop.*
     exit
   elif [ "$main_menu" == "Quit" ]; then
-    rm -f /tmp/archdesktop*
+    rm -f /tmp/archdesktop.*
     clear
     exit
   fi
