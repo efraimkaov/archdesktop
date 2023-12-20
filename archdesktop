@@ -59,15 +59,6 @@ function extra_packages() {
   "${menu_items[@]}" 3>&2 2>&1 1>&3)
 }
 
-# aur_helper
-function aur_helper() {
-  dialog --title " AUR Helper " \
-  --radiolist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
-  "None" "" on \
-  "paru" "pkg" off \
-  "yay" "pkg" off 3>&2 2>&1 1>&3
-}
-
 # main_menu in loop
 while true; do
     main_menu=$(dialog --no-cancel --title " Arch Desktop " \
@@ -75,7 +66,6 @@ while true; do
     "Desktop-Base + Common packages" "" \
     "Desktop Environment" "" \
     "Extra Packages" "" \
-    "AUR Helper" "" \
     "Service" "" \
     "Intall packages / Enable services" "" \
     "Remove packages / Disable services" "" \
@@ -114,8 +104,6 @@ while true; do
         break
       fi
     done
-  elif [ "$main_menu" == "AUR Helper" ]; then
-    aur_helper
   elif [ "$main_menu" == "Service" ]; then
     echo
   elif [ "$main_menu" == "Intall packages / Enable services" ]; then
