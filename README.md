@@ -54,8 +54,6 @@ sudo pacman -Syy --needed - < ./data/Base-packages
 
 ### To-Do List
 
-* ask for confirmation to remove **networkmanager**
-
 * implement **Services**
 
 * show message when no package or service is selected
