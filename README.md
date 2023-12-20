@@ -36,13 +36,27 @@ sudo ./archdesktop
 
 ![Budgie-Desktop](https://github.com/efraimkaov/archdesktop/assets/63643635/b7baa614-2bb7-45b9-b353-51446c74b978)
 
+### IMPORTANT!!!
+
+If you want to remove packages I highly recommend you to do this from CLI. You can easily switch to CLI whith the following command:
+
+```sh
+sudo systemctl isolate multi-user.target
+```
+
+### Optional
+
+If you want to install the Base-packages list, you can do this whith the following command:
+
+```sh
+sudo pacman -S --needed - < ./data/Base-packages
+```
+
 ### To-Do List
 
 * ask for confirmation to remove **networkmanager**
 
 * implement **Services**
-
-* improve **README.md**
 
 #### Bug report
 
