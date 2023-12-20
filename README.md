@@ -44,6 +44,14 @@ If you want to remove packages I highly recommend you to do this from CLI. You c
 sudo systemctl isolate multi-user.target
 ```
 
+### Troubleshoot
+
+If you have problems to install packages this may be because your system is not updated. You can update your system whith the following command:
+
+```sh
+sudo pacman -Syyu archlinux-keyring
+```
+
 ### Optional
 
 If you want to install the Base-packages list, you can do this whith the following command:
