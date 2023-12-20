@@ -7,7 +7,7 @@ The **Categories** and **Packages** list are pretty much from **EndeavourOS** Ca
 #### Install dependencies
 
 ```sh
-sudo pacman -S --needed dialog git --noconfirm
+sudo pacman -Syy --needed dialog git --noconfirm
 ```
 
 #### How to use
@@ -49,7 +49,7 @@ sudo systemctl isolate multi-user.target
 If you want to install the Base-packages list, you can do this whith the following command:
 
 ```sh
-sudo pacman -S --needed - < ./data/Base-packages
+sudo pacman -Syy --needed - < ./data/Base-packages
 ```
 
 ### To-Do List
