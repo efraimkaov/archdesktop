@@ -1,8 +1,8 @@
 # archdesktop
 
-This is a simple bash script for Arch Linux that Install and Remove Desktop Environments and Extra Packages, Add and Remove Groups, Install and Disable Services.
+This is a simple bash script for Arch Linux that Install and Remove Desktop Environments and some Extra Packages, Enable and Disable Services.
 
-The **Categories** and **Packages** list are pretty much from **EndeavourOS** ISO Installer. I removed from list **EndeavourOS** related packages, **base**, **coreutils** (except linux), **sudo** and **Bootloaders**. On top of that I added more **Browsers**, **Kernels** and a few more recommended packages.
+The **Categories** and **Packages** list are pretty much from **EndeavourOS** Calamares Installer. I removed from list **EndeavourOS** related packages, **base**, **coreutils**, **sudo** and **Bootloaders**. On top of that I added more **Browsers** and a few more **Recommended packages**.
 
 #### Install dependencies
 
@@ -30,43 +30,37 @@ sudo ./archdesktop
 
 #### A few screenshots
 
-![Arch Desktop](https://github.com/efraimkaov/archdesktop/assets/63643635/56161add-97bf-43bf-b43b-ffc661fcfdb5)
+![Arch Desktop](https://github.com/efraimkaov/archdesktop/assets/63643635/ca991cb8-1e43-4f01-9010-2f8366334c1b)
 
-![Desktop-Base](https://github.com/efraimkaov/archdesktop/assets/63643635/7e9322f6-1f14-4ece-984d-7179ba9508ef)
+![Desktop Environment](https://github.com/efraimkaov/archdesktop/assets/63643635/d1736a81-bf5d-467f-9238-e3112583a11a)
 
-![Audio](https://github.com/efraimkaov/archdesktop/assets/63643635/ea1fe0bd-2f30-4418-8c8e-d8c78079dabb)
+![Budgie-Desktop](https://github.com/efraimkaov/archdesktop/assets/63643635/b7baa614-2bb7-45b9-b353-51446c74b978)
 
 ### To-Do List
 
-* to implement **Remove selected packages** - in progress
+* ask for confirmation to remove **networkmanager**
 
-* to prevent the user to remove **networkmanager** and all **Kernels** - in progress
+* add **Service - avahi-daemon**
 
-* to implement **AUR Helper** - in progress
+* add **Service - bluetooth**
 
-* to implement **Group**
+* add **Service - Boot Target** (graphical and multi-user)
 
-* to add **Service - avahi-daemon**
+* add **Service - cups**
 
-* to add **Service - bluetooth**
+* add **Service - Display Manager** (gdm, lightdm and sddm)
 
-* to add **Service - Boot Target** (graphical and multi-user)
+* add **Service - firewalld**
 
-* to add **Service - cups**
+* add **Service - NetworkManager**
 
-* to add **Service - Display Manager** (gdm, lightdm and sddm)
+* add **Service - reflector**
 
-* to add **Service - firewalld**
+* add **Service - sshd**
 
-* to add **Service - NetworkManager**
+* add **Service - upower**
 
-* to add **Service - reflector**
-
-* to add **Service - sshd**
-
-* to add **Service - upower**
-
-* to improve README.md
+* improve README.md
 
 #### Bug report
 
