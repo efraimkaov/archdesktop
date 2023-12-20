@@ -76,10 +76,9 @@ while true; do
     "Desktop Environment" "" \
     "Extra Packages" "" \
     "AUR Helper" "" \
-    "Group" "" \
     "Service" "" \
-    "Intall selected packages" "" \
-    "Remove selected packages" "" \
+    "Intall packages / Enable services" "" \
+    "Remove packages / Disable services" "" \
     "Quit" "" 3>&2 2>&1 1>&3)
 
   if [ "$main_menu" == "Desktop-Base + Common packages" ]; then
@@ -117,11 +116,9 @@ while true; do
     done
   elif [ "$main_menu" == "AUR Helper" ]; then
     aur_helper
-  elif [ "$main_menu" == "Group" ]; then
-    echo
   elif [ "$main_menu" == "Service" ]; then
     echo
-  elif [ "$main_menu" == "Intall selected packages" ]; then
+  elif [ "$main_menu" == "Intall packages / Enable services" ]; then
     awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
     sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
     clear
@@ -130,7 +127,7 @@ while true; do
     pacman -S --needed - < /tmp/archdesktop.allsortuniqpkg.*
     rm -f /tmp/archdesktop.*
     exit
-  elif [ "$main_menu" == "Remove selected packages" ]; then
+  elif [ "$main_menu" == "Remove packages / Disable services" ]; then
     awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
     sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
     pacman -Qq | sort > $(mktemp /tmp/archdesktop.installedpkg.XXXXXX)
