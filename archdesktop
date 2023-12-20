@@ -61,7 +61,7 @@ function extra_packages() {
 
 # service
 function service() {
-  dialog --no-cancel --title " Service " \
+  service_menu=$(dialog --no-cancel --title " Service " \
   --menu "<Enter> activates" $height $width $listHeight \
   "Boot Target" "" \
   "Display Manager" "" \
@@ -72,7 +72,8 @@ function service() {
   "Network Manager" "" \
   "Reflector" "" \
   "Ssh" "" \
-  "Upower" "" 3>&2 2>&1 1>&3
+  "Upower" "" \
+  "Back" "" 3>&2 2>&1 1>&3)
 }
 
 # main_menu in loop
@@ -121,7 +122,14 @@ while true; do
       fi
     done
   elif [ "$main_menu" == "Service" ]; then
-    service
+    while true; do
+      service
+      if [ "$service_menu" != "Back" ]; then
+        echo
+      else
+        break
+      fi
+    done
   elif [ "$main_menu" == "Intall packages / Enable services" ]; then
     awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
     sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
