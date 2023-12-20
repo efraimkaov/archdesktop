@@ -154,7 +154,18 @@ while true; do
     comm -12 /tmp/archdesktop.allsortuniqpkg.* /tmp/archdesktop.installedpkg.* > $(mktemp /tmp/archdesktop.removepkg.XXXXXX)
     clear
     echo "Removing selected packages..."
-    pacman -Rcns - < /tmp/archdesktop.removepkg.*
+    if [ $(grep -x networkmanager /tmp/archdesktop.removepkg.*) ]; then
+      echo -e "${red}If you remove networkmanager, you may be left without internet access!${nc}"
+      read -p "Do you want to remove networkmanager? [y/N] " nm
+      if [ "$nm" == "y" ]; then
+        pacman -Rcns - < /tmp/archdesktop.removepkg.*
+      else
+        cat /tmp/archdesktop.removepkg.* | grep -v -x networkmanager > $(mktemp /tmp/archdesktop.removepkgnonm.XXXXXX)
+        pacman -Rcns - < /tmp/archdesktop.removepkgnonm.*
+      fi
+    else
+      pacman -Rcns - < /tmp/archdesktop.removepkg.*
+    fi
     rm -f /tmp/archdesktop.*
     echo -e "${green}All operations have been completed. You may now reboot.${nc}"
     exit
