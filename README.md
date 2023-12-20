@@ -40,27 +40,9 @@ sudo ./archdesktop
 
 * ask for confirmation to remove **networkmanager**
 
-* add **Service - avahi-daemon**
+* implement **Services**
 
-* add **Service - bluetooth**
-
-* add **Service - Boot Target** (graphical and multi-user)
-
-* add **Service - cups**
-
-* add **Service - Display Manager** (gdm, lightdm and sddm)
-
-* add **Service - firewalld**
-
-* add **Service - NetworkManager**
-
-* add **Service - reflector**
-
-* add **Service - sshd**
-
-* add **Service - upower**
-
-* improve README.md
+* improve **README.md**
 
 #### Bug report
 
