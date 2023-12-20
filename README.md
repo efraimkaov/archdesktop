@@ -58,6 +58,8 @@ sudo pacman -S --needed - < ./data/Base-packages
 
 * implement **Services**
 
+* show message when no package or service is selected
+
 #### Bug report
 
 If you find a bug please open a new [issue](https://github.com/efraimkaov/archdesktop/issues) and send a Bug report.
