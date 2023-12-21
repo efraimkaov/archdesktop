@@ -83,6 +83,79 @@ function service() {
   "Back" "" 3>&2 2>&1 1>&3)
 }
 
+# boot_target
+function boot_target() {
+  dialog --title " Boot Target " \
+  --radiolist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "graphical.target" "" on \
+  "multi-user.target" "" off 2> $(mktemp /tmp/archdesktop.btsrv.XXXXXX)
+}
+
+# display_manager
+function display_manager() {
+  dialog --title " Display Manager " \
+  --radiolist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "gdm.service" "" on \
+  "lightdm.service" "" off \
+  "sddm.service" "" off 2> $(mktemp /tmp/archdesktop.dmsrv.XXXXXX)
+}
+
+# avahi
+function avahi() {
+  dialog --title " Avahi " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "avahi-daemon.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
+# bluetooth
+function bluetooth() {
+  dialog --title " Bluetooth " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "bluetooth.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
+# cups
+function cups() {
+  dialog --title " Cups " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "cups.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
+# firewalld
+function firewalld() {
+  dialog --title " Firewalld " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "firewalld.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
+# network_manager
+function network_manager() {
+  dialog --title " Network Manager " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "NetworkManager.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
+# reflector
+function reflector() {
+  dialog --title " Reflector " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "reflector.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
+# ssh
+function ssh() {
+  dialog --title " Ssh " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "sshd.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
+# upower
+function upower() {
+  dialog --title " Upower " \
+  --checklist "<Tab> moves: <Space> selects: <Enter> activates" $height $width $listHeight \
+  "upower.service" "" on 2> $(mktemp /tmp/archdesktop.srv.XXXXXX)
+}
+
 # main_menu in loop
 while true; do
     main_menu=$(dialog --no-cancel --title " Arch Desktop " \
@@ -132,23 +205,97 @@ while true; do
     while true; do
       service
       if [ "$service_menu" != "Back" ]; then
-        echo
+        if [ "$service_menu" == "Boot Target" ]; then
+          boot_target
+        elif [ "$service_menu" == "Display Manager" ]; then
+          display_manager
+        elif [ "$service_menu" == "Avahi" ]; then
+          avahi
+        elif [ "$service_menu" == "Bluetooth" ]; then
+          bluetooth
+        elif [ "$service_menu" == "Cups" ]; then
+          cups
+        elif [ "$service_menu" == "Firewalld" ]; then
+          firewalld
+        elif [ "$service_menu" == "Network Manager" ]; then
+          network_manager
+        elif [ "$service_menu" == "Reflector" ]; then
+          reflector
+        elif [ "$service_menu" == "Ssh" ]; then
+          ssh
+        elif [ "$service_menu" == "Upower" ]; then
+          upower
+        fi
       else
         break
       fi
     done
   elif [ "$main_menu" == "Intall packages / Enable services" ]; then
-    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
-    sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
-    clear
-    echo "Installing selected packages..."
-    pacman -Syy archlinux-keyring --noconfirm
-    pacman -S --needed - < /tmp/archdesktop.allsortuniqpkg.*
-    rm -f /tmp/archdesktop.*
-    echo -e "${green}All operations have been completed. You may now reboot.${nc}"
-    exit
+    # if files unite them
+    list_pkg=$(ls -1 /tmp/archdesktop.pkg.* | grep /tmp/archdesktop.pkg.)
+    if [ -n "$list_pkg" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.pkg.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
+      sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
+    fi
+    list_btsrv=$(ls -1 /tmp/archdesktop.btsrv.* | grep /tmp/archdesktop.btsrv.)
+    if [ -n "$list_btsrv" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.btsrv.* >> $(mktemp /tmp/archdesktop.allbtsrv.XXXXXX)
+      sort /tmp/archdesktop.allbtsrv.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqbtsrv.XXXXXX)
+    fi
+    list_dmsrv=$(ls -1 /tmp/archdesktop.dmsrv.* | grep /tmp/archdesktop.dmsrv.)
+    if [ -n "$list_dmsrv" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.dmsrv.* >> $(mktemp /tmp/archdesktop.alldmsrv.XXXXXX)
+      sort /tmp/archdesktop.alldmsrv.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqdmsrv.XXXXXX)
+    fi
+    list_srv=$(ls -1 /tmp/archdesktop.srv.* | grep /tmp/archdesktop.srv.)
+    if [ -n "$list_srv" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.srv.* >> $(mktemp /tmp/archdesktop.allsrv.XXXXXX)
+      sort /tmp/archdesktop.allsrv.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqsrv.XXXXXX)
+    fi
+
+    # check files if are empty or not
+    if [ -s /tmp/archdesktop.allsortuniqpkg.* ]; then
+      check_pkg="not empty"
+    else
+      check_pkg="empty"
+    fi
+    if [ -s /tmp/archdesktop.allsortuniqbtsrv.* ]; then
+      check_btsrv="not empty"
+    else
+      check_btsrv="empty"
+    fi
+    if [ -s /tmp/archdesktop.allsortuniqdmsrv.* ]; then
+      check_dmsrv="not empty"
+    else
+      check_dmsrv="empty"
+    fi
+    if [ -s /tmp/archdesktop.allsortuniqsrv.* ]; then
+      check_srv="not empty"
+    else
+      check_srv="empty"
+    fi
+
+    # if at least one file is not empty then
+    if [ "$check_pkg" == "not empty" ] || [ "$check_btsrv" == "not empty" ] || [ "$check_dmsrv" == "not empty" ] || [ "$check_srv" == "not empty" ]; then
+      clear
+      if [ "$check_pkg" == "not empty" ]; then
+        echo "Installing selected packages..."
+        pacman -Syy archlinux-keyring --noconfirm
+        pacman -S --needed - < /tmp/archdesktop.allsortuniqpkg.*
+      fi
+      if [ "$check_srv" == "not empty" ]; then
+          echo "Enabling services..."
+          systemctl enable $(cat /tmp/archdesktop.allsortuniqsrv.*)
+      fi
+      rm -f /tmp/archdesktop.*
+      echo -e "${green}All operations have been completed. You may now reboot.${nc}"
+      exit
+    else
+      dialog --title " Info " --msgbox "You must select at least one package or service!" 7 35
+      rm -f /tmp/archdesktop.*
+    fi
   elif [ "$main_menu" == "Remove packages / Disable services" ]; then
-    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
+    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.pkg.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
     sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
     pacman -Qq | sort > $(mktemp /tmp/archdesktop.installedpkg.XXXXXX)
     comm -12 /tmp/archdesktop.allsortuniqpkg.* /tmp/archdesktop.installedpkg.* > $(mktemp /tmp/archdesktop.removepkg.XXXXXX)
