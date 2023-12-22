@@ -283,9 +283,37 @@ while true; do
         pacman -Syy archlinux-keyring --noconfirm
         pacman -S --needed - < /tmp/archdesktop.allsortuniqpkg.*
       fi
+      if [ "$check_btsrv" == "not empty" ]; then
+          echo "Enabling Boot Target..."
+          btsrv_def=$(cat /tmp/archdesktop.allsortuniqbtsrv.*)
+          systemctl set-default -f $btsrv_def
+      fi
+      if [ "$check_dmsrv" == "not empty" ]; then
+          echo "Enabling Display Manager..."
+          dmsrv_def=$(cat /tmp/archdesktop.allsortuniqdmsrv.*)
+          if [ "$dmsrv_def" == "gdm.service" ]; then
+            systemctl enable -f $dmsrv_def
+          elif [ "$dmsrv_def" == "lightdm.service" ]; then
+            systemctl enable -f $dmsrv_def
+            if [ -f /etc/lightdm/lightdm.conf ]; then
+              current_greeter=$(awk -F= '/^greeter-session=/ {print $2}' /etc/lightdm/lightdm.conf 2>/dev/null)
+              if [ -n "$current_greeter" ] && [ "$current_greeter" == "lightdm-slick-greeter" ]; then
+                true
+              elif [ -n "$current_greeter" ] && [ "$current_greeter" != "lightdm-slick-greeter" ]; then
+                sed -i '/^greeter-session=/s/.*/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
+              elif grep -xq '\[Seat:\*\]' /etc/lightdm/lightdm.conf; then
+                sed -i '/^\[Seat:\*\]$/a greeter-session=lightdm-slick-greeter' /etc/lightdm/lightdm.conf
+              else
+                echo -e "[Seat:*]\ngreeter-session=lightdm-slick-greeter" >> /etc/lightdm/lightdm.conf
+              fi
+            fi
+          elif [ "$dmsrv_def" == "sddm.service" ]; then
+            systemctl enable -f $dmsrv_def
+          fi
+      fi
       if [ "$check_srv" == "not empty" ]; then
           echo "Enabling services..."
-          systemctl enable $(cat /tmp/archdesktop.allsortuniqsrv.*)
+          systemctl enable -f $(cat /tmp/archdesktop.allsortuniqsrv.*)
       fi
       rm -f /tmp/archdesktop.*
       echo -e "${green}All operations have been completed. You may now reboot.${nc}"
