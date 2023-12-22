@@ -1,6 +1,6 @@
 # archdesktop
 
-This is a simple bash script for Arch Linux that Install and Remove Desktop Environments and some Extra Packages, Enable and Disable Services.
+This is a bash script for Arch Linux that Install and Remove Desktop Environments and some Extra Packages, Enable and Disable Services.
 
 The **Categories** and **Packages** list are pretty much from **EndeavourOS** Calamares Installer. I removed from list **EndeavourOS** related packages, **base**, **coreutils**, **sudo** and **Bootloaders**. On top of that I added more **Browsers** and a few more **Recommended packages**.
 
