@@ -60,12 +60,6 @@ If you want to install the Base-packages list, you can do this whith the followi
 sudo pacman -Syy --needed - < ./data/Base-packages
 ```
 
-### To-Do List
-
-* implement **Services**
-
-* show message when no package or service is selected
-
 #### Bug report
 
 If you find a bug please open a new [issue](https://github.com/efraimkaov/archdesktop/issues) and send a Bug report.
