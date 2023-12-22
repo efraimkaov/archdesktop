@@ -313,7 +313,12 @@ while true; do
       fi
       if [ "$check_srv" == "not empty" ]; then
           echo "Enabling services..."
-          systemctl enable -f $(cat /tmp/archdesktop.allsortuniqsrv.*)
+          while read -r service_list; do
+            if systemctl list-units --quiet --all "$service_list"; then
+              echo "$service_list"
+              systemctl enable -f $service_list
+            fi
+          done </tmp/archdesktop.allsortuniqsrv.*
       fi
       rm -f /tmp/archdesktop.*
       echo -e "${green}All operations have been completed. You may now reboot.${nc}"
@@ -323,27 +328,100 @@ while true; do
       rm -f /tmp/archdesktop.*
     fi
   elif [ "$main_menu" == "Remove packages / Disable services" ]; then
-    awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.pkg.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
-    sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
-    pacman -Qq | sort > $(mktemp /tmp/archdesktop.installedpkg.XXXXXX)
-    comm -12 /tmp/archdesktop.allsortuniqpkg.* /tmp/archdesktop.installedpkg.* > $(mktemp /tmp/archdesktop.removepkg.XXXXXX)
-    clear
-    echo "Removing selected packages..."
-    if [ $(grep -x networkmanager /tmp/archdesktop.removepkg.*) ]; then
-      echo -e "${red}If you remove networkmanager, you may be left without internet access!${nc}"
-      read -p "Do you want to remove networkmanager? [y/N] " nm
-      if [ "$nm" == "y" ]; then
-        pacman -Rcns - < /tmp/archdesktop.removepkg.*
-      else
-        cat /tmp/archdesktop.removepkg.* | grep -v -x networkmanager > $(mktemp /tmp/archdesktop.removepkgnonm.XXXXXX)
-        pacman -Rcns - < /tmp/archdesktop.removepkgnonm.*
-      fi
-    else
-      pacman -Rcns - < /tmp/archdesktop.removepkg.*
+    # if files unite them
+    list_pkg=$(ls -1 /tmp/archdesktop.pkg.* | grep /tmp/archdesktop.pkg.)
+    if [ -n "$list_pkg" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.pkg.* >> $(mktemp /tmp/archdesktop.allpkg.XXXXXX)
+      sort /tmp/archdesktop.allpkg.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqpkg.XXXXXX)
+      pacman -Qq | sort > $(mktemp /tmp/archdesktop.installedpkg.XXXXXX)
+      comm -12 /tmp/archdesktop.allsortuniqpkg.* /tmp/archdesktop.installedpkg.* > $(mktemp /tmp/archdesktop.removepkg.XXXXXX)
     fi
-    rm -f /tmp/archdesktop.*
-    echo -e "${green}All operations have been completed. You may now reboot.${nc}"
-    exit
+    list_btsrv=$(ls -1 /tmp/archdesktop.btsrv.* | grep /tmp/archdesktop.btsrv.)
+    if [ -n "$list_btsrv" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.btsrv.* >> $(mktemp /tmp/archdesktop.allbtsrv.XXXXXX)
+      sort /tmp/archdesktop.allbtsrv.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqbtsrv.XXXXXX)
+    fi
+    list_dmsrv=$(ls -1 /tmp/archdesktop.dmsrv.* | grep /tmp/archdesktop.dmsrv.)
+    if [ -n "$list_dmsrv" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.dmsrv.* >> $(mktemp /tmp/archdesktop.alldmsrv.XXXXXX)
+      sort /tmp/archdesktop.alldmsrv.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqdmsrv.XXXXXX)
+    fi
+    list_srv=$(ls -1 /tmp/archdesktop.srv.* | grep /tmp/archdesktop.srv.)
+    if [ -n "$list_srv" ]; then
+      awk -v ORS='\n' '{ for (i = 1; i <= NF; i++) print $i }' /tmp/archdesktop.srv.* >> $(mktemp /tmp/archdesktop.allsrv.XXXXXX)
+      sort /tmp/archdesktop.allsrv.*  | uniq > $(mktemp /tmp/archdesktop.allsortuniqsrv.XXXXXX)
+    fi
+
+    # check files if are empty or not
+    if [ -s /tmp/archdesktop.removepkg.* ]; then
+      check_pkg="not empty"
+    else
+      check_pkg="empty"
+    fi
+    if [ -s /tmp/archdesktop.allsortuniqbtsrv.* ]; then
+      check_btsrv="not empty"
+    else
+      check_btsrv="empty"
+    fi
+    if [ -s /tmp/archdesktop.allsortuniqdmsrv.* ]; then
+      check_dmsrv="not empty"
+    else
+      check_dmsrv="empty"
+    fi
+    if [ -s /tmp/archdesktop.allsortuniqsrv.* ]; then
+      check_srv="not empty"
+    else
+      check_srv="empty"
+    fi
+
+    # if at least one file is not empty then
+    if [ "$check_pkg" == "not empty" ] || [ "$check_btsrv" == "not empty" ] || [ "$check_dmsrv" == "not empty" ] || [ "$check_srv" == "not empty" ]; then
+      clear
+      if [ "$check_pkg" == "not empty" ]; then
+        echo "Removing selected packages..."
+        if [ $(grep -x networkmanager /tmp/archdesktop.removepkg.*) ]; then
+          echo -e "${red}If you remove networkmanager, you may be left without internet access!${nc}"
+          read -p "Do you want to remove networkmanager? [y/N] " nm
+          if [ "$nm" == "y" ]; then
+            pacman -Rcns - < /tmp/archdesktop.removepkg.*
+          else
+            cat /tmp/archdesktop.removepkg.* | grep -v -x networkmanager > $(mktemp /tmp/archdesktop.removepkgnonm.XXXXXX)
+            pacman -Rcns - < /tmp/archdesktop.removepkgnonm.*
+          fi
+        else
+          pacman -Rcns - < /tmp/archdesktop.removepkg.*
+        fi
+      fi
+      if [ "$check_btsrv" == "not empty" ]; then
+          echo "Disabling Boot Target..."
+          btsrv_def=$(cat /tmp/archdesktop.allsortuniqbtsrv.*)
+          if [ "$btsrv_def" == "graphical.target" ]; then
+            systemctl set-default -f multi-user.target
+          elif [ "$btsrv_def" == "multi-user.target" ]; then
+            systemctl set-default -f graphical.target
+          fi
+      fi
+      if [ "$check_dmsrv" == "not empty" ]; then
+          echo "Disabling Display Manager..."
+          dmsrv_def=$(cat /tmp/archdesktop.allsortuniqdmsrv.*)
+          systemctl disable -f $dmsrv_def
+      fi
+      if [ "$check_srv" == "not empty" ]; then
+          echo "Disabling services..."
+          while read -r service_list; do
+            if systemctl list-units --quiet --all "$service_list"; then
+              echo "$service_list"
+              systemctl disable -f $service_list
+            fi
+          done </tmp/archdesktop.allsortuniqsrv.*
+      fi
+      rm -f /tmp/archdesktop.*
+      echo -e "${green}All operations have been completed. You may now reboot.${nc}"
+      exit
+    else
+      dialog --title " Info " --msgbox "You must select at least one package or service!" 7 35
+      rm -f /tmp/archdesktop.*
+    fi
   elif [ "$main_menu" == "Quit" ]; then
     rm -f /tmp/archdesktop.*
     clear
